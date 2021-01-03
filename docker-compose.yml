@@ -1,0 +1,11 @@
+version: "3.6"
+services:
+  ecoforest_proxy:
+    build: .
+    container_name: ecoforest
+    restart: always
+    env_file: [".ecoforest-proxy.env"]
+    volumes:
+      - ./:/usr/src/app:rw
+    ports:
+      - 8998:8998
