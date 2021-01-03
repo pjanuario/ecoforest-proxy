@@ -113,6 +113,33 @@ class EcoforestServer(BaseHTTPRequestHandler):
         return reply
 
 
+    def ecoforest_alarms(self):
+        result = self.ecoforest_call('idOperacion=1079')
+        reply = dict(e.split('=') for e in result.text.split('\n')[:-1]) # discard last line ?
+
+        states = {
+            'A012' : 'cpu temp max',
+            'A099' : 'pellets',
+        }
+
+        state = reply['get_alarmas']
+        if state in states:
+            reply['alarm'] = states[state]
+        else:
+            reply['alarm'] = 'unknown'
+            logging.debug('reply: %s', reply)
+
+        return reply
+
+    def get_alarms(self):
+        if DEBUG: logging.debug('GET alarms')
+        stats = self.ecoforest_alarms()
+        if stats:
+            self.send(stats)
+        else:
+            self.send_error(500, 'Something went wrong here on the server side.')
+
+
     # queries the ecoforest server with the supplied contents and parses the results into JSON
     def ecoforest_call(self, body):
         if DEBUG: logging.debug('Request:\n%s' % (body))
@@ -164,6 +191,7 @@ class EcoforestServer(BaseHTTPRequestHandler):
             '/ecoforest/status': self.get_status,
             '/ecoforest/set_status': self.set_status,
             '/ecoforest/set_temp': self.set_temp,
+            '/ecoforest/alarms': self.get_alarms,
         }
 
         # API calls
