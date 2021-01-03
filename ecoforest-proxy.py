@@ -86,23 +86,21 @@ class EcoforestServer(BaseHTTPRequestHandler):
     def ecoforest_stats(self):
         stats = self.ecoforest_call('idOperacion=1002')
         reply = dict(e.split('=') for e in stats.text.split('\n')[:-1]) # discard last line ?
-
         states = {
             '0'  : 'off',
-            '1'  : 'off',
+            '1'  : 'starting',
             '2'  : 'starting',
             '3'  : 'starting',
             '4'  : 'starting',
-            '5'  : 'starting',
             '10' : 'starting',
+            '5'  : 'pre heating',
+            '6'  : 'pre heating',
             '7'  : 'on',
             '8'  : 'shutting down',
-            '-2' : 'shutting down',
-            '9'  : 'shutting down',
             '11' : 'shutting down',
-            '-3' : 'alarm',
+            '-3' : 'shutting down',
+            '-20': 'stand by',
             '-4' : 'alarm',
-            '20' : 'stand by',
         }
 
         state = reply['estado']
