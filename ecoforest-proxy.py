@@ -83,6 +83,17 @@ class EcoforestServer(BaseHTTPRequestHandler):
         self.send(self.ecoforest_stats())
 
 
+    def set_potency(self, potency):
+        if DEBUG: logging.debug('SET POTENCY: %s' % (potency))
+        if float(potency) < 1:
+            potency = "1"
+        if float(potency) > 9:
+            potency = "9"
+        # idOperacion=1004&potencia
+        data = self.ecoforest_call('idOperacion=1004&potencia=' + potency)
+        self.send(self.ecoforest_stats())
+
+
     def ecoforest_stats(self):
         stats = self.ecoforest_call('idOperacion=1002')
         reply = dict(e.split('=') for e in stats.text.split('\n')[:-1]) # discard last line ?
@@ -191,6 +202,7 @@ class EcoforestServer(BaseHTTPRequestHandler):
             '/ecoforest/status': self.get_status,
             '/ecoforest/set_status': self.set_status,
             '/ecoforest/set_temp': self.set_temp,
+            '/ecoforest/set_potency': self.set_potency,
             '/ecoforest/alarms': self.get_alarms,
         }
 
