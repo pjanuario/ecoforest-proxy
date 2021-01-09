@@ -155,7 +155,9 @@ class EcoforestServer(BaseHTTPRequestHandler):
         result = self.ecoforest_call('idOperacion=1020')
         reply = dict(e.split('=') for e in result.text.split('\n')[:-1]) # discard last line ?
 
-        return reply
+        reply_filtered = { k: reply[k] for k in [' Tp'] }
+
+        return reply_filtered
 
     def get_stats(self):
         if DEBUG: logging.debug('GET stats')
