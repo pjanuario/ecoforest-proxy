@@ -182,7 +182,8 @@ class EcoforestServer(BaseHTTPRequestHandler):
         if parsed_path.path in dispatch:
             try:
                 dispatch[parsed_path.path](post_body, **args)
-            except:
+            except Exception as e:
+                if DEBUG: logging.error('POST error:\n%s', exc_info=e)
                 self.send_error(500, 'Something went wrong here on the server side.')
         else:
             self.send_error(404,'File Not Found: %s' % parsed_path.path)
@@ -210,7 +211,8 @@ class EcoforestServer(BaseHTTPRequestHandler):
         if parsed_path.path in dispatch:
             try:
                 dispatch[parsed_path.path](**args)
-            except:
+            except Exception as e:
+                if DEBUG: logging.error('GET error:\n%s', exc_info=e)
                 self.send_error(500, 'Something went wrong here on the server side.')
         else:
             self.send_error(404,'File Not Found: %s' % parsed_path.path)
