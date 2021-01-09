@@ -150,6 +150,21 @@ class EcoforestServer(BaseHTTPRequestHandler):
         else:
             self.send_error(500, 'Something went wrong here on the server side.')
 
+    def ecoforest_stats(self):
+        if DEBUG: logging.debug('ecoforest_stats:\n')
+        result = self.ecoforest_call('idOperacion=1020')
+        reply = dict(e.split('=') for e in result.text.split('\n')[:-1]) # discard last line ?
+
+        return reply
+
+    def get_stats(self):
+        if DEBUG: logging.debug('GET stats')
+        stats = self.ecoforest_stats()
+        if stats:
+            self.send(stats)
+        else:
+            self.send_error(500, 'Something went wrong here on the server side.')
+
 
     # queries the ecoforest server with the supplied contents and parses the results into JSON
     def ecoforest_call(self, body):
@@ -205,6 +220,7 @@ class EcoforestServer(BaseHTTPRequestHandler):
             '/ecoforest/set_temp': self.set_temp,
             '/ecoforest/set_potency': self.set_potency,
             '/ecoforest/alarms': self.get_alarms,
+            '/ecoforest/stats': self.get_stats,
         }
 
         # API calls
