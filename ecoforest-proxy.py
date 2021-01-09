@@ -150,7 +150,7 @@ class EcoforestServer(BaseHTTPRequestHandler):
         else:
             self.send_error(500, 'Something went wrong here on the server side.')
 
-    def ecoforest_stats(self):
+    def ecoforest_stats_details(self):
         if DEBUG: logging.debug('ecoforest_stats:\n')
         result = self.ecoforest_call('idOperacion=1020')
         reply = dict(e.split('=') for e in result.text.split('\n')[:-1]) # discard last line ?
@@ -161,7 +161,7 @@ class EcoforestServer(BaseHTTPRequestHandler):
 
     def get_stats(self):
         if DEBUG: logging.debug('GET stats')
-        stats = self.ecoforest_stats()
+        stats = self.ecoforest_stats_details()
         if stats:
             self.send(stats)
         else:
